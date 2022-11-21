@@ -1,9 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AlEjazSMS.Classes;
+using AlEjazSMS.FeeStructures;
+using AlEjazSMS.FeeTransactions;
+using AlEjazSMS.StudentFees;
+using AlEjazSMS.Students;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -52,6 +58,13 @@ public class AlEjazSMSDbContext :
 
     #endregion
 
+    public DbSet<Student> Students { get; set; }
+    public DbSet<Class> Classes { get; set; }
+    public DbSet<FeeStructure> FeeStructures { get; set; }
+    public DbSet<FeeStructureLineItem> StructureLineItems { get; set; }
+    public DbSet<StudentFee> StudentFees { get; set; }
+    public DbSet<FeeTransaction> FeeTransactions { get; set; }
+
     public AlEjazSMSDbContext(DbContextOptions<AlEjazSMSDbContext> options)
         : base(options)
     {
@@ -75,11 +88,102 @@ public class AlEjazSMSDbContext :
 
         /* Configure your own tables/entities inside here */
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(AlEjazSMSConsts.DbTablePrefix + "YourEntities", AlEjazSMSConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        builder.Entity<Student>(b =>
+        {
+            b.ToTable("Students");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+            b.Property(x => x.CNIC).HasMaxLength(20);
+            b.Property(x => x.PhoneNumber).HasMaxLength(13);
+            b.Property(x => x.FatherName).HasMaxLength(200);
+            b.Property(x => x.FatherCNIC).HasMaxLength(20);
+            b.Property(x => x.PresentAddress).HasMaxLength(500);
+
+            b.HasOne(x => x.Class)
+                .WithMany(x => x.Students)
+                .HasForeignKey(x => x.ClassId)
+                .IsRequired();
+
+            b.HasOne(x => x.FeeStructure)
+                .WithMany()
+                .HasForeignKey(x => x.FeeStructureId);
+        });
+
+        builder.Entity<Class>(b =>
+        {
+            b.ToTable("Classes");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Code).IsRequired().HasMaxLength(3);
+            b.Property(x => x.Name).IsRequired().HasMaxLength(50);
+            b.Property(x => x.Section).HasMaxLength(50);
+        });
+
+        builder.Entity<FeeStructure>(b =>
+        {
+            b.ToTable("FeeStructures");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Title).IsRequired().HasMaxLength(200);
+            b.Property(x => x.Description).HasMaxLength(500);
+        });
+
+        builder.Entity<FeeStructureLineItem>(b =>
+        {
+            b.ToTable("FeeStructureLineItems");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.Property(x => x.ShortDescription).IsRequired().HasMaxLength(150);
+            b.Property(x => x.Amount).HasColumnType("decimal(18,2)");
+
+            b.HasOne(x => x.FeeStructure)
+                .WithMany(x => x.LineItems)
+                .HasForeignKey(x => x.FeeStructureId)
+                .IsRequired();
+        });
+
+        builder.Entity<StudentFee>(b =>
+        {
+            b.ToTable("StudentFees");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Amount).HasColumnType("decimal(18,2)");
+
+            b.HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .IsRequired();
+
+            b.HasOne(x => x.FeeStructure)
+                .WithMany()
+                .HasForeignKey(x => x.FeeStructureId)
+                .IsRequired();
+        });
+
+        builder.Entity<FeeTransaction>(b =>
+        {
+            b.ToTable("FeeTransactions");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Amount).HasColumnType("decimal(18,2)");
+
+            b.HasOne(x => x.StudentFee)
+                .WithMany(x=>x.FeeTransactions)
+                .HasForeignKey(x => x.StudentFeeId)
+                .IsRequired();
+        });
     }
 }
