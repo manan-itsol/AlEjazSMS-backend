@@ -1,6 +1,5 @@
 ﻿using AlEjazSMS.Common;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,11 +25,9 @@ namespace AlEjazSMS.Sections
         {
             var query = (await _sectionRepository.GetQueryableAsync())
                                 .WhereIf(!string.IsNullOrEmpty(input.SearchKey), x =>
-                                    x.Name.Contains(input.SearchKey));
-            var result = await query
-                                .OrderByIf<Section, IQueryable<Section>>(!string.IsNullOrEmpty(input.Sorting), input.Sorting)
-                                .PageBy(input)
-                                .ToListAsync();
+                                    x.Name.Contains(input.SearchKey))
+                                .OrderByIf<Section, IQueryable<Section>>(!string.IsNullOrEmpty(input.Sorting), input.Sorting);
+            var result = await AsyncExecuter.ToListAsync(query.PageBy(input));
             return new PagedResultDto<SectionDto>(query.LongCount(), ObjectMapper.Map<List<Section>, List<SectionDto>>(result));
         }
 

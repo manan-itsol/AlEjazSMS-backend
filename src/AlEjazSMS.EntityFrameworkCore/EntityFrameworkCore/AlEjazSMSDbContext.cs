@@ -64,6 +64,7 @@ public class AlEjazSMSDbContext :
     public DbSet<Branch> Branches { get; set; }
     public DbSet<Class> Classes { get; set; }
     public DbSet<Section> Sections { get; set; }
+    public DbSet<ClassSection> ClassSections { get; set; }
     public DbSet<FeeStructure> FeeStructures { get; set; }
     public DbSet<FeeStructureLineItem> StructureLineItems { get; set; }
     public DbSet<StudentFee> StudentFees { get; set; }
@@ -106,9 +107,12 @@ public class AlEjazSMSDbContext :
             b.Property(x => x.FatherCNIC).HasMaxLength(20);
             b.Property(x => x.PresentAddress).HasMaxLength(500);
 
-            b.HasOne(x => x.Section)
-                .WithMany(x => x.Students)
-                .HasForeignKey(x => x.SectionId)
+            b.HasIndex(x => new { x.RollNo, x.ClassSectionId })
+                .IsUnique(true);
+
+            b.HasOne(x => x.ClassSection)
+                .WithMany()
+                .HasForeignKey(x => x.ClassSectionId)
                 .IsRequired();
 
             b.HasOne(x => x.FeeStructure)
@@ -152,10 +156,27 @@ public class AlEjazSMSDbContext :
 
             b.Property(x => x.Name).IsRequired().HasMaxLength(50);
 
+        });
+
+        builder.Entity<ClassSection>(b =>
+        {
+            b.ToTable("ClassSections");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
             b.HasOne(x => x.Class)
-                .WithMany(x => x.Sections)
+                .WithMany(x => x.ClassSections)
                 .HasForeignKey(x => x.ClassId)
                 .IsRequired();
+
+            b.HasOne(x => x.Section)
+                .WithMany(x => x.ClassSections)
+                .HasForeignKey(x => x.SectionId)
+                .IsRequired();
+
+            b.HasIndex(x => new { x.SectionId, x.ClassId })
+                .IsUnique();
         });
 
         builder.Entity<FeeStructure>(b =>

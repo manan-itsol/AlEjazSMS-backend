@@ -8,7 +8,5 @@ namespace AlEjazSMS.Sections
     public class SectionDto: EntityDto<int>
     {
         public string Name { get; set; }
-
-        public int ClassId { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AlEjazSMS.Common;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +26,9 @@ namespace AlEjazSMS.Branches
             var query = (await _branchRepository.GetQueryableAsync())
                                 .WhereIf(!string.IsNullOrEmpty(input.SearchKey), x =>
                                     x.Name.Contains(input.SearchKey)
-                                    || x.Code.Contains(input.SearchKey));
-            var result = await query
-                                .OrderByIf<Branch, IQueryable<Branch>>(!string.IsNullOrEmpty(input.Sorting), input.Sorting)
-                                .PageBy(input)
-                                .ToListAsync();
+                                    || x.Code.Contains(input.SearchKey))
+                                .OrderByIf<Branch, IQueryable<Branch>>(!string.IsNullOrEmpty(input.Sorting), input.Sorting);
+            var result = await AsyncExecuter.ToListAsync(query.PageBy(input));
             return new PagedResultDto<BranchDto>(query.LongCount(), ObjectMapper.Map<List<Branch>, List<BranchDto>>(result));
         }
 

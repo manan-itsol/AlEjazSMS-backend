@@ -12,5 +12,7 @@ namespace AlEjazSMS.Classes
         public string Name { get; set; }
 
         public int BranchId { get; set; }
+
+        public List<string> SectionNames { get; set; }
     }
 }

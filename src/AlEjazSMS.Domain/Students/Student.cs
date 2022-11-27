@@ -29,8 +29,8 @@ namespace AlEjazSMS.Students
 
         public DateTime AdmissionDate { get; set; }
 
-        public int SectionId { get; set; }
-        public virtual Section Section { get; set; }
+        public int ClassSectionId { get; set; }
+        public virtual ClassSection ClassSection { get; set; }
 
         public int? FeeStructureId { get; set; }
         public virtual FeeStructure FeeStructure { get; set; }

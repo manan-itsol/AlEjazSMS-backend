@@ -15,5 +15,7 @@ namespace AlEjazSMS.Classes
 
         [Required]
         public int BranchId { get; set; }
+
+        public List<int> SectionIds { get; set; }
     }
 }

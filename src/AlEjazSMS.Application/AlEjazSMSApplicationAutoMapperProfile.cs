@@ -1,5 +1,6 @@
 ﻿using AlEjazSMS.Branches;
 using AlEjazSMS.Classes;
+using AlEjazSMS.FeeStructures;
 using AlEjazSMS.Sections;
 using AlEjazSMS.Students;
 using AutoMapper;
@@ -22,6 +23,8 @@ public class AlEjazSMSApplicationAutoMapperProfile : Profile
         ClassMappings();
 
         SectionMappings();
+
+        FeeStructureMapping();
     }
 
     private void BranchMappings()
@@ -69,6 +72,22 @@ public class AlEjazSMSApplicationAutoMapperProfile : Profile
             .ReverseMap();
 
         CreateMap<Student, UpdateStudentRequestDto>()
+            .ReverseMap();
+    }
+
+    private void FeeStructureMapping()
+    {
+        CreateMap<FeeStructure, FeeStructureDto>()
+            .ReverseMap();
+
+        CreateMap<FeeStructure, CreateFeeStructureRequestDto>()
+            .ReverseMap();
+
+        CreateMap<FeeStructure, UpdateFeeStructureRequestDto>()
+            .ReverseMap();
+
+        /// Fee structure Line item
+        CreateMap<FeeStructureLineItem, FeeStructureLineItemDto>()
             .ReverseMap();
     }
 }

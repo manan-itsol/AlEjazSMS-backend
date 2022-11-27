@@ -7,6 +7,8 @@ namespace AlEjazSMS.Students
 {
     public class CreateStudentRequestDto
     {
+        public long RollNo { get; set; }
+
         [Required, MaxLength(200)]
         public string Name { get; set; }
 
@@ -26,6 +28,9 @@ namespace AlEjazSMS.Students
         public string PresentAddress { get; set; }
 
         public DateTime AdmissionDate { get; set; }
+
+        [Required]
+        public int ClassId { get; set; }
 
         [Required]
         public int SectionId { get; set; }

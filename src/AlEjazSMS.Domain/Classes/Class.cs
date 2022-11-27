@@ -19,6 +19,6 @@ namespace AlEjazSMS.Classes
         public int BranchId { get; set; }
         public virtual Branch Branch { get; set; }
 
-        public virtual ICollection<Section> Sections { get; set; }
+        public virtual ICollection<ClassSection> ClassSections { get; set; }
     }
 }

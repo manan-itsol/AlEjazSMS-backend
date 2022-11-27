@@ -9,8 +9,5 @@ namespace AlEjazSMS.Sections
     {
         [Required, MaxLength(50)]
         public string Name { get; set; }
-
-        [Required]
-        public int ClassId { get; set; }
     }
 }

@@ -14,9 +14,6 @@ namespace AlEjazSMS.Sections
     {
         public string Name { get; set; }
         
-        public int ClassId { get; set; }
-        public virtual Class Class { get; set; }
-
-        public virtual ICollection<Student> Students { get; set; }
+        public virtual ICollection<ClassSection> ClassSections { get; set; }
     }
 }
