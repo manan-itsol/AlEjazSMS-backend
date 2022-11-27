@@ -1,12 +1,19 @@
-﻿using System;
+﻿using AlEjazSMS.Common;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace AlEjazSMS.Students
 {
     public interface IStudentAppService: IApplicationService
     {
-        string GetStudent();
+        Task<PagedResultDto<StudentDto>> GetAllAsync(GetAllRequestDto input);
+        Task<StudentDto> GetAsync(long id);
+        Task<GenericResponseDto<StudentDto>> CreateAsync(CreateStudentRequestDto request);
+        Task<GenericResponseDto<StudentDto>> UpdateAsync(UpdateStudentRequestDto request);
+        Task<BaseResponseDto> DeleteAsync(long id);
     }
 }

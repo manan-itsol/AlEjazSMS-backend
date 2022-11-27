@@ -1,6 +1,8 @@
-﻿using AlEjazSMS.Classes;
+﻿using AlEjazSMS.Branches;
+using AlEjazSMS.Classes;
 using AlEjazSMS.FeeStructures;
 using AlEjazSMS.FeeTransactions;
+using AlEjazSMS.Sections;
 using AlEjazSMS.StudentFees;
 using AlEjazSMS.Students;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +61,9 @@ public class AlEjazSMSDbContext :
     #endregion
 
     public DbSet<Student> Students { get; set; }
+    public DbSet<Branch> Branches { get; set; }
     public DbSet<Class> Classes { get; set; }
+    public DbSet<Section> Sections { get; set; }
     public DbSet<FeeStructure> FeeStructures { get; set; }
     public DbSet<FeeStructureLineItem> StructureLineItems { get; set; }
     public DbSet<StudentFee> StudentFees { get; set; }
@@ -102,14 +106,25 @@ public class AlEjazSMSDbContext :
             b.Property(x => x.FatherCNIC).HasMaxLength(20);
             b.Property(x => x.PresentAddress).HasMaxLength(500);
 
-            b.HasOne(x => x.Class)
+            b.HasOne(x => x.Section)
                 .WithMany(x => x.Students)
-                .HasForeignKey(x => x.ClassId)
+                .HasForeignKey(x => x.SectionId)
                 .IsRequired();
 
             b.HasOne(x => x.FeeStructure)
                 .WithMany()
                 .HasForeignKey(x => x.FeeStructureId);
+        });
+
+        builder.Entity<Branch>(b =>
+        {
+            b.ToTable("Branches");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Code).IsRequired().HasMaxLength(10);
+            b.Property(x => x.Name).IsRequired().HasMaxLength(100);
         });
 
         builder.Entity<Class>(b =>
@@ -121,7 +136,26 @@ public class AlEjazSMSDbContext :
 
             b.Property(x => x.Code).IsRequired().HasMaxLength(3);
             b.Property(x => x.Name).IsRequired().HasMaxLength(50);
-            b.Property(x => x.Section).HasMaxLength(50);
+
+            b.HasOne(x => x.Branch)
+                .WithMany(x => x.Classes)
+                .HasForeignKey(x => x.BranchId)
+                .IsRequired();
+        });
+
+        builder.Entity<Section>(b =>
+        {
+            b.ToTable("Sections");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Name).IsRequired().HasMaxLength(50);
+
+            b.HasOne(x => x.Class)
+                .WithMany(x => x.Sections)
+                .HasForeignKey(x => x.ClassId)
+                .IsRequired();
         });
 
         builder.Entity<FeeStructure>(b =>
@@ -181,7 +215,7 @@ public class AlEjazSMSDbContext :
             b.Property(x => x.Amount).HasColumnType("decimal(18,2)");
 
             b.HasOne(x => x.StudentFee)
-                .WithMany(x=>x.FeeTransactions)
+                .WithMany(x => x.FeeTransactions)
                 .HasForeignKey(x => x.StudentFeeId)
                 .IsRequired();
         });

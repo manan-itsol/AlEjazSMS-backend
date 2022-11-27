@@ -1,40 +1,35 @@
-﻿using AlEjazSMS.Classes;
-using AlEjazSMS.FeeStructures;
-using AlEjazSMS.Sections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Domain.Entities.Auditing;
 
 namespace AlEjazSMS.Students
 {
-    public class Student: AuditedEntity<long>
+    public class CreateStudentRequestDto
     {
-        public long RollNo { get; set; }
-
+        [Required, MaxLength(200)]
         public string Name { get; set; }
 
+        [MaxLength(20)]
         public string CNIC { get; set; }
 
+        [Phone, MaxLength(13)]
         public string PhoneNumber { get; set; }
 
+        [MaxLength(200)]
         public string FatherName { get; set; }
 
+        [MaxLength(20)]
         public string FatherCNIC { get; set; }
 
+        [MaxLength(500)]
         public string PresentAddress { get; set; }
 
         public DateTime AdmissionDate { get; set; }
 
+        [Required]
         public int SectionId { get; set; }
-        public virtual Section Section { get; set; }
 
         public int? FeeStructureId { get; set; }
-        public virtual FeeStructure FeeStructure { get; set; }
-
-        public StudentStatus Status { get; set; }
     }
 }
