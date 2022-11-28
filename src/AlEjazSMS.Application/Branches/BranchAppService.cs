@@ -79,5 +79,19 @@ namespace AlEjazSMS.Branches
             await CurrentUnitOfWork.SaveChangesAsync();
             return new BaseResponseDto { Success = true };
         }
+
+        public async Task<List<LookupDto>> GetLookupAsync(string searchText = null)
+        {
+            var query = (await _branchRepository.GetQueryableAsync())
+                                .WhereIf(!string.IsNullOrEmpty(searchText), x =>
+                                    x.Name.Contains(searchText)
+                                    || x.Code.Contains(searchText));
+            var result = await AsyncExecuter.ToListAsync(query.Select(x=> new LookupDto
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            }));
+            return result;
+        }
     }
 }

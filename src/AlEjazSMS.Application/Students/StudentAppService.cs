@@ -105,7 +105,18 @@ namespace AlEjazSMS.Students
             return new BaseResponseDto { Success = true };
         }
 
-        #region helpers
-        #endregion helpers
+        public async Task<List<LookupDto>> GetLookupAsync(string searchText = null)
+        {
+            var query = (await _studentRepository.GetQueryableAsync())
+                                .WhereIf(!string.IsNullOrEmpty(searchText), x =>
+                                    x.Name.Contains(searchText)
+                                    || x.RollNo.ToString().Contains(searchText));
+            var result = await AsyncExecuter.ToListAsync(query.Select(x=> new LookupDto
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            }));
+            return result;
+        }
     }
 }

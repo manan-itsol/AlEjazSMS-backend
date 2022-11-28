@@ -15,10 +15,10 @@ namespace AlEjazSMS.Classes
     [Authorize]
     public class ClassAppService : ApplicationService, IClassAppService
     {
-        private readonly IRepository<Class, int> _classRepository;
+        private readonly IClassRepository _classRepository;
         private readonly IRepository<ClassSection, int> _classSectionRepository;
         public ClassAppService(
-            IRepository<Class, int> classRepository,
+            IClassRepository classRepository,
             IRepository<ClassSection, int> classSectionRepository)
         {
             _classRepository = classRepository;
@@ -27,27 +27,18 @@ namespace AlEjazSMS.Classes
 
         public async Task<PagedResultDto<ClassDto>> GetAllAsync(GetAllRequestDto input)
         {
-            try
-            {
-
-                var query = (await _classRepository.GetQueryableAsync())
-                                    .WhereIf(!string.IsNullOrEmpty(input.SearchKey), x =>
-                                        x.Name.Contains(input.SearchKey)
-                                        || x.Code.Contains(input.SearchKey))
-                                    .OrderByIf<Class, IQueryable<Class>>(!string.IsNullOrEmpty(input.Sorting), input.Sorting);
-                var result = await AsyncExecuter.ToListAsync(query.PageBy(input));
-                return new PagedResultDto<ClassDto>(query.LongCount(), ObjectMapper.Map<List<Class>, List<ClassDto>>(result));
-
-            }
-            catch (Exception ex)
-            {
-                throw;
-            };
+            var query = (await _classRepository.GetQueryableAsync())
+                                .WhereIf(!string.IsNullOrEmpty(input.SearchKey), x =>
+                                    x.Name.Contains(input.SearchKey)
+                                    || x.Code.Contains(input.SearchKey))
+                                .OrderByIf<Class, IQueryable<Class>>(!string.IsNullOrEmpty(input.Sorting), input.Sorting);
+            var result = await AsyncExecuter.ToListAsync(query.PageBy(input));
+            return new PagedResultDto<ClassDto>(query.LongCount(), ObjectMapper.Map<List<Class>, List<ClassDto>>(result));
         }
 
         public async Task<ClassDto> GetAsync(int id)
         {
-            var query = (await _classRepository.WithDetailsAsync(x => x.ClassSections, x => x.ClassSections.Select(x => x.Section)))
+            var query = (await _classRepository.WithDetailsAsync())
                             .Where(x => x.Id == id)
                             .Select(x => new ClassDto
                             {
@@ -86,7 +77,7 @@ namespace AlEjazSMS.Classes
 
         public async Task<GenericResponseDto<ClassDto>> UpdateAsync(UpdateClassRequestDto request)
         {
-            var classObj = await _classRepository.GetAsync(request.Id);
+            var classObj = await _classRepository.GetAsync(request.Id, includeDetails: true);
             if (classObj == null)
                 throw new EntityNotFoundException(typeof(Class));
 
@@ -132,6 +123,20 @@ namespace AlEjazSMS.Classes
             await _classRepository.DeleteAsync(classObj);
             await CurrentUnitOfWork.SaveChangesAsync();
             return new BaseResponseDto { Success = true };
+        }
+
+        public async Task<List<LookupDto>> GetLookupAsync(string searchText = null)
+        {
+            var query = (await _classRepository.GetQueryableAsync())
+                                .WhereIf(!string.IsNullOrEmpty(searchText), x =>
+                                    x.Name.Contains(searchText)
+                                    || x.Code.Contains(searchText));
+            var result = await AsyncExecuter.ToListAsync(query.Select(x=> new LookupDto
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            }));
+            return result;
         }
     }
 }

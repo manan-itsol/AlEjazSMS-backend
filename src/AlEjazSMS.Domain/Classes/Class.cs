@@ -12,6 +12,11 @@ namespace AlEjazSMS.Classes
 {
     public class Class : AuditedEntity<int>
     {
+        public Class()
+        {
+            ClassSections = new HashSet<ClassSection>();
+        }
+
         public string Code { get; set; }
 
         public string Name { get; set; }

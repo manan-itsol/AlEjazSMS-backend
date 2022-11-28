@@ -14,5 +14,6 @@ namespace AlEjazSMS.Branches
         Task<GenericResponseDto<BranchDto>> CreateAsync(CreateBranchRequestDto request);
         Task<GenericResponseDto<BranchDto>> UpdateAsync(UpdateBranchRequestDto request);
         Task<BaseResponseDto> DeleteAsync(int id);
+        Task<List<LookupDto>> GetLookupAsync(string searchText = null);
     }
 }
