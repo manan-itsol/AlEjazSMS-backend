@@ -1,4 +1,5 @@
-﻿using AlEjazSMS.Students;
+﻿using AlEjazSMS.Branches;
+using AlEjazSMS.Sections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,18 @@ namespace AlEjazSMS.Classes
 {
     public class Class : AuditedEntity<int>
     {
+        public Class()
+        {
+            ClassSections = new HashSet<ClassSection>();
+        }
+
         public string Code { get; set; }
 
         public string Name { get; set; }
 
-        public string Section { get; set; }
+        public int BranchId { get; set; }
+        public virtual Branch Branch { get; set; }
 
-        public virtual ICollection<Student> Students { get; set; }
+        public virtual ICollection<ClassSection> ClassSections { get; set; }
     }
 }

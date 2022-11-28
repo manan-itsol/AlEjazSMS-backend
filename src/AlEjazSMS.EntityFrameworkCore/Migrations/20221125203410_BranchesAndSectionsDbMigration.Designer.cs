@@ -4,6 +4,7 @@ using AlEjazSMS.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,10 @@ using Volo.Abp.EntityFrameworkCore;
 namespace AlEjazSMS.Migrations
 {
     [DbContext(typeof(AlEjazSMSDbContext))]
-    partial class AlEjazSMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221125203410_BranchesAndSectionsDbMigration")]
+    partial class BranchesAndSectionsDbMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,30 +107,6 @@ namespace AlEjazSMS.Migrations
                     b.HasIndex("BranchId");
 
                     b.ToTable("Classes", (string)null);
-                });
-
-            modelBuilder.Entity("AlEjazSMS.Classes.ClassSection", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SectionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassId");
-
-                    b.HasIndex("SectionId", "ClassId")
-                        .IsUnique();
-
-                    b.ToTable("ClassSections", (string)null);
                 });
 
             modelBuilder.Entity("AlEjazSMS.FeeStructures.FeeStructure", b =>
@@ -266,6 +244,9 @@ namespace AlEjazSMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("ClassId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("CreationTime");
@@ -288,6 +269,8 @@ namespace AlEjazSMS.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
 
                     b.ToTable("Sections", (string)null);
                 });
@@ -355,9 +338,6 @@ namespace AlEjazSMS.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("ClassSectionId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("CreationTime");
@@ -401,17 +381,17 @@ namespace AlEjazSMS.Migrations
                     b.Property<long>("RollNo")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("SectionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClassSectionId");
-
                     b.HasIndex("FeeStructureId");
 
-                    b.HasIndex("RollNo", "ClassSectionId")
-                        .IsUnique();
+                    b.HasIndex("SectionId");
 
                     b.ToTable("Students", (string)null);
                 });
@@ -1869,25 +1849,6 @@ namespace AlEjazSMS.Migrations
                     b.Navigation("Branch");
                 });
 
-            modelBuilder.Entity("AlEjazSMS.Classes.ClassSection", b =>
-                {
-                    b.HasOne("AlEjazSMS.Classes.Class", "Class")
-                        .WithMany("ClassSections")
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AlEjazSMS.Sections.Section", "Section")
-                        .WithMany("ClassSections")
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Class");
-
-                    b.Navigation("Section");
-                });
-
             modelBuilder.Entity("AlEjazSMS.FeeStructures.FeeStructureLineItem", b =>
                 {
                     b.HasOne("AlEjazSMS.FeeStructures.FeeStructure", "FeeStructure")
@@ -1908,6 +1869,17 @@ namespace AlEjazSMS.Migrations
                         .IsRequired();
 
                     b.Navigation("StudentFee");
+                });
+
+            modelBuilder.Entity("AlEjazSMS.Sections.Section", b =>
+                {
+                    b.HasOne("AlEjazSMS.Classes.Class", "Class")
+                        .WithMany("Sections")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
                 });
 
             modelBuilder.Entity("AlEjazSMS.StudentFees.StudentFee", b =>
@@ -1931,19 +1903,19 @@ namespace AlEjazSMS.Migrations
 
             modelBuilder.Entity("AlEjazSMS.Students.Student", b =>
                 {
-                    b.HasOne("AlEjazSMS.Classes.ClassSection", "ClassSection")
-                        .WithMany()
-                        .HasForeignKey("ClassSectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AlEjazSMS.FeeStructures.FeeStructure", "FeeStructure")
                         .WithMany()
                         .HasForeignKey("FeeStructureId");
 
-                    b.Navigation("ClassSection");
+                    b.HasOne("AlEjazSMS.Sections.Section", "Section")
+                        .WithMany("Students")
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FeeStructure");
+
+                    b.Navigation("Section");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
@@ -2095,7 +2067,7 @@ namespace AlEjazSMS.Migrations
 
             modelBuilder.Entity("AlEjazSMS.Classes.Class", b =>
                 {
-                    b.Navigation("ClassSections");
+                    b.Navigation("Sections");
                 });
 
             modelBuilder.Entity("AlEjazSMS.FeeStructures.FeeStructure", b =>
@@ -2105,7 +2077,7 @@ namespace AlEjazSMS.Migrations
 
             modelBuilder.Entity("AlEjazSMS.Sections.Section", b =>
                 {
-                    b.Navigation("ClassSections");
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("AlEjazSMS.StudentFees.StudentFee", b =>
