@@ -1,5 +1,6 @@
 ﻿using AlEjazSMS.Common;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,6 +76,7 @@ namespace AlEjazSMS.Classes
             };
         }
 
+        [HttpPost]
         public async Task<GenericResponseDto<ClassDto>> UpdateAsync(UpdateClassRequestDto request)
         {
             var classObj = await _classRepository.GetAsync(request.Id, includeDetails: true);

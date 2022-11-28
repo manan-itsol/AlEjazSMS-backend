@@ -1,5 +1,6 @@
 ﻿using AlEjazSMS.Common;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,7 @@ namespace AlEjazSMS.Branches
             };
         }
 
+        [HttpPost]
         public async Task<GenericResponseDto<BranchDto>> UpdateAsync(UpdateBranchRequestDto request)
         {
             var branch = await _branchRepository.GetAsync(request.Id);

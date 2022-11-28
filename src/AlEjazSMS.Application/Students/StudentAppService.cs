@@ -1,6 +1,7 @@
 ﻿using AlEjazSMS.Classes;
 using AlEjazSMS.Common;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,7 @@ namespace AlEjazSMS.Students
             };
         }
 
+        [HttpPost]
         public async Task<GenericResponseDto<StudentDto>> UpdateAsync(UpdateStudentRequestDto request)
         {
             var response = new GenericResponseDto<StudentDto> { Success = false };

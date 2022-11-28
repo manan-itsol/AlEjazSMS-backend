@@ -1,5 +1,6 @@
 ﻿using AlEjazSMS.Common;
 using AlEjazSMS.Students;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,7 @@ namespace AlEjazSMS.FeeStructures
             };
         }
 
+        [HttpPost]
         public async Task<GenericResponseDto<FeeStructureDto>> UpdateAsync(UpdateFeeStructureRequestDto request)
         {
             var feeStructure = await _feeStructureRepository.GetAsync(request.Id);

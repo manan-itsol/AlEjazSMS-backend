@@ -1,5 +1,6 @@
 ﻿using AlEjazSMS.Common;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +53,7 @@ namespace AlEjazSMS.Sections
             };
         }
 
+        [HttpPost]
         public async Task<GenericResponseDto<SectionDto>> UpdateAsync(UpdateSectionRequestDto request)
         {
             var section = await _sectionRepository.GetAsync(request.Id);
@@ -79,7 +81,7 @@ namespace AlEjazSMS.Sections
             return new BaseResponseDto { Success = true };
         }
 
-        public async Task<List<LookupDto>> GetAllAsync(string searchText = null)
+        public async Task<List<LookupDto>> GetLookupAsync(string searchText = null)
         {
             var query = (await _sectionRepository.GetQueryableAsync())
                                 .WhereIf(!string.IsNullOrEmpty(searchText), x =>
