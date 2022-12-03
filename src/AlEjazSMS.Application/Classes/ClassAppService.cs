@@ -28,7 +28,7 @@ namespace AlEjazSMS.Classes
 
         public async Task<PagedResultDto<ClassDto>> GetAllAsync(GetAllRequestDto input)
         {
-            var query = (await _classRepository.GetQueryableAsync())
+            var query = (await _classRepository.WithDetailsAsync())
                                 .WhereIf(!string.IsNullOrEmpty(input.SearchKey), x =>
                                     x.Name.Contains(input.SearchKey)
                                     || x.Code.Contains(input.SearchKey))

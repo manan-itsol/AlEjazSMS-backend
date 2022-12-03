@@ -17,7 +17,9 @@ namespace AlEjazSMS.Classes
             }
 
             return queryable
-                .Include(x => x.ClassSections);
+                .Include(x => x.Branch)
+                .Include(x => x.ClassSections)
+                    .ThenInclude(x => x.Section);
         }
     }
 }

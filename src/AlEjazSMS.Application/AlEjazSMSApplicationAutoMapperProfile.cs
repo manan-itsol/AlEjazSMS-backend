@@ -5,6 +5,7 @@ using AlEjazSMS.Sections;
 using AlEjazSMS.Students;
 using AutoMapper;
 using System;
+using System.Linq;
 
 namespace AlEjazSMS;
 
@@ -42,6 +43,8 @@ public class AlEjazSMSApplicationAutoMapperProfile : Profile
     private void ClassMappings()
     {
         CreateMap<Class, ClassDto>()
+            .ForMember(dest => dest.BranchName, cfg => cfg.MapFrom(src => src.Branch != null ? src.Branch.Name : null))
+            .ForMember(dest => dest.SectionNames, cfg => cfg.MapFrom(src => src.ClassSections.Select(x => x.Section.Name).ToList()))
              .ReverseMap();
 
         CreateMap<Class, CreateClassRequestDto>()
