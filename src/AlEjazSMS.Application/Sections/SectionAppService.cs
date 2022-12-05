@@ -1,4 +1,5 @@
-﻿using AlEjazSMS.Common;
+﻿using AlEjazSMS.Classes;
+using AlEjazSMS.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,9 +18,12 @@ namespace AlEjazSMS.Sections
     public class SectionAppService : ApplicationService, ISectionAppService
     {
         private readonly IRepository<Section, int> _sectionRepository;
-        public SectionAppService(IRepository<Section, int> sectionRepository)
+        private readonly IRepository<ClassSection, int> _classSectionRepository;
+        public SectionAppService(IRepository<Section, int> sectionRepository,
+            IRepository<ClassSection, int> classSectionRepository)
         {
             _sectionRepository = sectionRepository;
+            _classSectionRepository = classSectionRepository;
         }
 
         public async Task<PagedResultDto<SectionDto>> GetAllAsync(GetAllRequestDto input)
@@ -86,6 +90,19 @@ namespace AlEjazSMS.Sections
             var query = (await _sectionRepository.GetQueryableAsync())
                                 .WhereIf(!string.IsNullOrEmpty(searchText), x =>
                                     x.Name.Contains(searchText));
+            var result = await AsyncExecuter.ToListAsync(query.Select(x => new LookupDto
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            }));
+            return result;
+        }
+
+        public async Task<List<LookupDto>> GetLookupByClassAsync(int classId)
+        {
+            var query = (await _classSectionRepository.WithDetailsAsync())
+                                .Where(x => x.ClassId == classId)
+                                .Select(x => x.Section);
             var result = await AsyncExecuter.ToListAsync(query.Select(x => new LookupDto
             {
                 Text = x.Name,

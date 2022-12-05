@@ -21,5 +21,17 @@ namespace AlEjazSMS.Classes
                 .Include(x => x.ClassSections)
                     .ThenInclude(x => x.Section);
         }
+
+        public static IQueryable<ClassSection> IncludeDetails(this IQueryable<ClassSection> queryable, bool include = true)
+        {
+            if (!include)
+            {
+                return queryable;
+            }
+
+            return queryable
+                .Include(x => x.Section)
+                .Include(x => x.Class);
+        }
     }
 }
