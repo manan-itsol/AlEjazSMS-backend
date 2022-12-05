@@ -44,7 +44,8 @@ public class AlEjazSMSApplicationAutoMapperProfile : Profile
     {
         CreateMap<Class, ClassDto>()
             .ForMember(dest => dest.BranchName, cfg => cfg.MapFrom(src => src.Branch != null ? src.Branch.Name : null))
-            .ForMember(dest => dest.SectionNames, cfg => cfg.MapFrom(src => src.ClassSections.Select(x => x.Section.Name).ToList()))
+            .ForMember(dest => dest.Sections, cfg => cfg.MapFrom(src =>
+                src.ClassSections == null ? null : src.ClassSections.Select(x => new SectionDto { Id = x.SectionId, Name = x.Section.Name }).ToList()))
              .ReverseMap();
 
         CreateMap<Class, CreateClassRequestDto>()

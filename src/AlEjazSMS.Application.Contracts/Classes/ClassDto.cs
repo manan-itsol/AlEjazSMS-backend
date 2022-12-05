@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AlEjazSMS.Common;
+using AlEjazSMS.Sections;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Volo.Abp.Application.Dtos;
@@ -15,6 +17,6 @@ namespace AlEjazSMS.Classes
 
         public string BranchName { get; set; }
 
-        public List<string> SectionNames { get; set; }
+        public List<SectionDto> Sections { get; set; }
     }
 }

@@ -40,20 +40,12 @@ namespace AlEjazSMS.Classes
         public async Task<ClassDto> GetAsync(int id)
         {
             var query = (await _classRepository.WithDetailsAsync())
-                            .Where(x => x.Id == id)
-                            .Select(x => new ClassDto
-                            {
-                                Id = x.Id,
-                                BranchId = x.BranchId,
-                                Code = x.Code,
-                                Name = x.Name,
-                                SectionNames = x.ClassSections.Select(x => x.Section.Name).ToList()
-                            });
+                            .Where(x => x.Id == id);
             var classDto = await AsyncExecuter.FirstOrDefaultAsync(query);
             if (classDto == null)
                 throw new EntityNotFoundException(typeof(Class));
 
-            return classDto;
+            return ObjectMapper.Map<Class, ClassDto>(classDto);
         }
 
         public async Task<GenericResponseDto<ClassDto>> CreateAsync(CreateClassRequestDto request)
