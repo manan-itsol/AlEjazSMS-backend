@@ -15,5 +15,6 @@ namespace AlEjazSMS.Classes
         Task<GenericResponseDto<ClassDto>> UpdateAsync(UpdateClassRequestDto request);
         Task<BaseResponseDto> DeleteAsync(int id);
         Task<List<LookupDto>> GetLookupAsync(string searchText = null);
+        Task<List<LookupDto>> GetLookupByBranchAsync(int branchId, string searchText = null);
     }
 }

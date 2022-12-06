@@ -125,7 +125,22 @@ namespace AlEjazSMS.Classes
                                 .WhereIf(!string.IsNullOrEmpty(searchText), x =>
                                     x.Name.Contains(searchText)
                                     || x.Code.Contains(searchText));
-            var result = await AsyncExecuter.ToListAsync(query.Select(x=> new LookupDto
+            var result = await AsyncExecuter.ToListAsync(query.Select(x => new LookupDto
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            }));
+            return result;
+        }
+
+        public async Task<List<LookupDto>> GetLookupByBranchAsync(int branchId, string searchText = null)
+        {
+            var query = (await _classRepository.GetQueryableAsync())
+                                .Where(x=>x.BranchId == branchId)
+                                .WhereIf(!string.IsNullOrEmpty(searchText), x =>
+                                    x.Name.Contains(searchText)
+                                    || x.Code.Contains(searchText));
+            var result = await AsyncExecuter.ToListAsync(query.Select(x => new LookupDto
             {
                 Text = x.Name,
                 Value = x.Id.ToString()
