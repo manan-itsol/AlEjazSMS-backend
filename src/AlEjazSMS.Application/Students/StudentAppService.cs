@@ -51,7 +51,7 @@ namespace AlEjazSMS.Students
 
         public async Task<GenericResponseDto<StudentDto>> CreateAsync(CreateStudentRequestDto request)
         {
-            var classSection = await _classSectionRepository.GetAsync(x => x.ClassId == request.ClassId && x.SectionId == request.SectionId);
+            var classSection = await _classSectionRepository.FindAsync(x => x.ClassId == request.ClassId && x.SectionId == request.SectionId);
             if (classSection == null)
             {
                 throw new AbpValidationException("Class or Section is not valid.");
