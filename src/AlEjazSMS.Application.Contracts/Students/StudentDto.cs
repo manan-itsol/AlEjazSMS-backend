@@ -24,9 +24,11 @@ namespace AlEjazSMS.Students
 
         public DateTime AdmissionDate { get; set; }
 
-        public int SectionId { get; set; }
+        public int? ClassId { get; set; }
+        public string ClassName { get; set; }
 
-        public int? FeeStructureId { get; set; }
+        public int? SectionId { get; set; }
+        public string SectionName { get; set; }
 
         public StudentStatus Status { get; set; }
     }

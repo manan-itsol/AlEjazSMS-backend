@@ -35,6 +35,6 @@ namespace AlEjazSMS.Students
         [Required]
         public int SectionId { get; set; }
 
-        public int? FeeStructureId { get; set; }
+        public DateTime? DateOfBirth { get; set; }
     }
 }

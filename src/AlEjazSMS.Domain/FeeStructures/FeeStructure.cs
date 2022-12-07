@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlEjazSMS.Students;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,5 +36,7 @@ namespace AlEjazSMS.FeeStructures
                 existingLine.Amount = amount;
             }
         }
+
+        public virtual ICollection<StudentFeeStructure> StudentFeeStructures { get; set; }
     }
 }

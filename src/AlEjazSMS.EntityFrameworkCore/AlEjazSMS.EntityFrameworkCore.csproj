@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <Folder Include="ClassSections\" />
-    <Folder Include="Students\" />
   </ItemGroup>
 
 </Project>

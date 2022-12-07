@@ -13,6 +13,11 @@ namespace AlEjazSMS.Students
 {
     public class Student: AuditedEntity<long>
     {
+        public Student()
+        {
+            StudentFeeStructures = new HashSet<StudentFeeStructure>();
+        }
+
         public long RollNo { get; set; }
 
         public string Name { get; set; }
@@ -32,9 +37,10 @@ namespace AlEjazSMS.Students
         public int ClassSectionId { get; set; }
         public virtual ClassSection ClassSection { get; set; }
 
-        public int? FeeStructureId { get; set; }
-        public virtual FeeStructure FeeStructure { get; set; }
-
         public StudentStatus Status { get; set; }
+
+        public DateTime? DateOfBirth { get; set; }
+
+        public virtual ICollection<StudentFeeStructure> StudentFeeStructures { get; set; }
     }
 }

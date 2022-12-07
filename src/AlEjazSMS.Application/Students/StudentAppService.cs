@@ -18,23 +18,32 @@ namespace AlEjazSMS.Students
     [Authorize]
     public class StudentAppService : ApplicationService, IStudentAppService
     {
-        private readonly IRepository<Student, long> _studentRepository;
+        private readonly IStudentRepository _studentRepository;
         private readonly IRepository<ClassSection, int> _classSectionRepository;
-        public StudentAppService(IRepository<Student, long> studentRepository,
+        public StudentAppService(
+            IStudentRepository studentRepository,
             IRepository<ClassSection, int> classSectionRepository)
         {
             _studentRepository = studentRepository;
             _classSectionRepository = classSectionRepository;
         }
 
-        public async Task<PagedResultDto<StudentDto>> GetAllAsync(GetAllRequestDto input)
+        public async Task<PagedResultDto<StudentDto>> GetAllAsync(StudentGetAllRequestDto input)
         {
-            var query = (await _studentRepository.GetQueryableAsync())
+            var query = (await _studentRepository.WithDetailsAsync())
                                 .WhereIf(!string.IsNullOrEmpty(input.SearchKey), x =>
                                     x.Name.Contains(input.SearchKey)
                                     || x.CNIC.Contains(input.SearchKey)
+                                    || x.FatherName.Contains(input.SearchKey)
+                                    || x.FatherCNIC.Contains(input.SearchKey)
                                     || x.PhoneNumber.Contains(input.SearchKey)
                                     || x.RollNo.ToString().Contains(input.SearchKey))
+                                .WhereIf(input.ClassIds != null && input.ClassIds.Count() > 0, x =>
+                                    input.ClassIds.Contains(x.ClassSection.ClassId))
+                                .WhereIf(input.SectionIds != null && input.SectionIds.Count() > 0, x =>
+                                    input.SectionIds.Contains(x.ClassSection.SectionId))
+                                .WhereIf(input.BranchIds != null && input.BranchIds.Count() > 0, x =>
+                                    input.BranchIds.Contains(x.ClassSection.Class.BranchId))
                                 .OrderByIf<Student, IQueryable<Student>>(!string.IsNullOrEmpty(input.Sorting), input.Sorting);
             var result = await AsyncExecuter.ToListAsync(query.PageBy(input));
             return new PagedResultDto<StudentDto>(query.LongCount(), ObjectMapper.Map<List<Student>, List<StudentDto>>(result));
@@ -54,7 +63,7 @@ namespace AlEjazSMS.Students
             var classSection = await _classSectionRepository.FindAsync(x => x.ClassId == request.ClassId && x.SectionId == request.SectionId);
             if (classSection == null)
             {
-                throw new AbpValidationException("Class or Section is not valid.");
+                throw new EntityNotFoundException("Class section doesn't exist in the system.");
             }
 
             var student = ObjectMapper.Map<CreateStudentRequestDto, Student>(request);
@@ -113,12 +122,27 @@ namespace AlEjazSMS.Students
                                 .WhereIf(!string.IsNullOrEmpty(searchText), x =>
                                     x.Name.Contains(searchText)
                                     || x.RollNo.ToString().Contains(searchText));
-            var result = await AsyncExecuter.ToListAsync(query.Select(x=> new LookupDto
+            var result = await AsyncExecuter.ToListAsync(query.Select(x => new LookupDto
             {
                 Text = x.Name,
                 Value = x.Id.ToString()
             }));
             return result;
+        }
+
+        public async Task<long> GetNextRollNoAsync(int classId, int sectionId)
+        {
+            var classSection = await _classSectionRepository.FindAsync(x => x.ClassId == classId && x.SectionId == sectionId);
+            if (classSection == null)
+            {
+                throw new EntityNotFoundException("Class section doesn't exist in the system.");
+            }
+
+            var lastRollNo = await AsyncExecuter.FirstOrDefaultAsync((await _studentRepository.GetQueryableAsync())
+                                                .Where(x => x.ClassSectionId == classSection.Id)
+                                                .OrderByDescending(x => x.RollNo)
+                                                .Select(x => x.RollNo));
+            return lastRollNo + 1;
         }
     }
 }

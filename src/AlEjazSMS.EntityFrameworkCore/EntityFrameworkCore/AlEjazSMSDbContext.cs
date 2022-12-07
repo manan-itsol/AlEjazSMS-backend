@@ -114,10 +114,27 @@ public class AlEjazSMSDbContext :
                 .WithMany()
                 .HasForeignKey(x => x.ClassSectionId)
                 .IsRequired();
+        });
+
+        builder.Entity<StudentFeeStructure>(b =>
+        {
+            b.ToTable("StudentFeeStructures");
+
+            //auto configure for the base class props
+            b.ConfigureByConvention();
+
+            b.HasOne(x => x.Student)
+                .WithMany(x => x.StudentFeeStructures)
+                .HasForeignKey(x => x.StudentId)
+                .IsRequired();
 
             b.HasOne(x => x.FeeStructure)
-                .WithMany()
-                .HasForeignKey(x => x.FeeStructureId);
+                .WithMany(x => x.StudentFeeStructures)
+                .HasForeignKey(x => x.FeeStructureId)
+                .IsRequired();
+
+            b.HasIndex(x => new { x.StudentId, x.FeeStructureId})
+                .IsUnique();
         });
 
         builder.Entity<Branch>(b =>
