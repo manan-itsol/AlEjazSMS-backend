@@ -24,6 +24,8 @@ namespace AlEjazSMS.Students
 
         public DateTime AdmissionDate { get; set; }
 
+        public int? BranchId { get; set; }
+
         public int? ClassId { get; set; }
         public string ClassName { get; set; }
 

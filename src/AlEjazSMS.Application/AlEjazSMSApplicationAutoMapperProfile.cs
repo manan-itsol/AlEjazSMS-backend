@@ -70,6 +70,8 @@ public class AlEjazSMSApplicationAutoMapperProfile : Profile
     private void StudentMappings()
     {
         CreateMap<Student, StudentDto>()
+            .ForMember(dest => dest.BranchId,
+                opt => opt.MapFrom(src => src.ClassSection != null && src.ClassSection.Class != null ? src.ClassSection.Class.BranchId : (int?)null))
             .ForMember(dest => dest.ClassId, opt => opt.MapFrom(src => src.ClassSection != null ? src.ClassSection.ClassId : (int?)null))
             .ForMember(dest => dest.ClassName, 
                 opt => opt.MapFrom(src => src.ClassSection != null && src.ClassSection.Class != null ? src.ClassSection.Class.Name : null))
