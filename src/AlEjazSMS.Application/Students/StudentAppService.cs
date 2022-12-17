@@ -121,7 +121,9 @@ namespace AlEjazSMS.Students
             var query = (await _studentRepository.GetQueryableAsync())
                                 .WhereIf(!string.IsNullOrEmpty(searchText), x =>
                                     x.Name.Contains(searchText)
-                                    || x.RollNo.ToString().Contains(searchText));
+                                    || x.CNIC.Contains(searchText)
+                                    || x.RollNo.ToString().Contains(searchText)
+                                    || x.FatherCNIC.Contains(searchText));
             var result = await AsyncExecuter.ToListAsync(query.Select(x => new LookupDto
             {
                 Text = x.Name,
