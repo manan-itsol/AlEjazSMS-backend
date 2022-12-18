@@ -1,4 +1,5 @@
 ﻿using AlEjazSMS.Common;
+using AlEjazSMS.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,6 +23,7 @@ namespace AlEjazSMS.Branches
             _branchRepository = branchRepository;
         }
 
+        [Authorize(PermissionConsts.BranchesManagement_Branches)]
         public async Task<PagedResultDto<BranchDto>> GetAllAsync(GetAllRequestDto input)
         {
             var query = (await _branchRepository.GetQueryableAsync())
@@ -33,6 +35,7 @@ namespace AlEjazSMS.Branches
             return new PagedResultDto<BranchDto>(query.LongCount(), ObjectMapper.Map<List<Branch>, List<BranchDto>>(result));
         }
 
+        [Authorize(PermissionConsts.BranchesManagement_Branches)]
         public async Task<BranchDto> GetAsync(int id)
         {
             var branch = await _branchRepository.GetAsync(id);
@@ -42,6 +45,7 @@ namespace AlEjazSMS.Branches
             return ObjectMapper.Map<Branch, BranchDto>(branch);
         }
 
+        [Authorize(PermissionConsts.BranchesManagement_Branches_Create)]
         public async Task<GenericResponseDto<BranchDto>> CreateAsync(CreateBranchRequestDto request)
         {
             var branch = ObjectMapper.Map<CreateBranchRequestDto, Branch>(request);
@@ -55,6 +59,7 @@ namespace AlEjazSMS.Branches
         }
 
         [HttpPost]
+        [Authorize(PermissionConsts.BranchesManagement_Branches_Update)]
         public async Task<GenericResponseDto<BranchDto>> UpdateAsync(UpdateBranchRequestDto request)
         {
             var branch = await _branchRepository.GetAsync(request.Id);
@@ -71,6 +76,7 @@ namespace AlEjazSMS.Branches
             };
         }
 
+        [Authorize(PermissionConsts.BranchesManagement_Branches_Delete)]
         public async Task<BaseResponseDto> DeleteAsync(int id)
         {
             var branch = await _branchRepository.GetAsync(id);
@@ -88,7 +94,7 @@ namespace AlEjazSMS.Branches
                                 .WhereIf(!string.IsNullOrEmpty(searchText), x =>
                                     x.Name.Contains(searchText)
                                     || x.Code.Contains(searchText));
-            var result = await AsyncExecuter.ToListAsync(query.Select(x=> new LookupDto
+            var result = await AsyncExecuter.ToListAsync(query.Select(x => new LookupDto
             {
                 Text = x.Name,
                 Value = x.Id.ToString()

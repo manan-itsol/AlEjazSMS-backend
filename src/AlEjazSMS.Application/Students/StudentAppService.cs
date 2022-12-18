@@ -1,5 +1,6 @@
 ﻿using AlEjazSMS.Classes;
 using AlEjazSMS.Common;
+using AlEjazSMS.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -28,6 +29,7 @@ namespace AlEjazSMS.Students
             _classSectionRepository = classSectionRepository;
         }
 
+        [Authorize(PermissionConsts.StudentsManagement_Students)]
         public async Task<PagedResultDto<StudentDto>> GetAllAsync(StudentGetAllRequestDto input)
         {
             var query = (await _studentRepository.WithDetailsAsync())
@@ -49,6 +51,7 @@ namespace AlEjazSMS.Students
             return new PagedResultDto<StudentDto>(query.LongCount(), ObjectMapper.Map<List<Student>, List<StudentDto>>(result));
         }
 
+        [Authorize(PermissionConsts.StudentsManagement_Students)]
         public async Task<StudentDto> GetAsync(long id)
         {
             var student = await _studentRepository.GetAsync(id);
@@ -58,6 +61,7 @@ namespace AlEjazSMS.Students
             return ObjectMapper.Map<Student, StudentDto>(student);
         }
 
+        [Authorize(PermissionConsts.StudentsManagement_Students_Create)]
         public async Task<GenericResponseDto<StudentDto>> CreateAsync(CreateStudentRequestDto request)
         {
             var classSection = await _classSectionRepository.FindAsync(x => x.ClassId == request.ClassId && x.SectionId == request.SectionId);
@@ -78,6 +82,7 @@ namespace AlEjazSMS.Students
         }
 
         [HttpPost]
+        [Authorize(PermissionConsts.StudentsManagement_Students_Update)]
         public async Task<GenericResponseDto<StudentDto>> UpdateAsync(UpdateStudentRequestDto request)
         {
             var response = new GenericResponseDto<StudentDto> { Success = false };
@@ -105,6 +110,7 @@ namespace AlEjazSMS.Students
             };
         }
 
+        [Authorize(PermissionConsts.StudentsManagement_Students_Delete)]
         public async Task<BaseResponseDto> DeleteAsync(long id)
         {
             var student = await _studentRepository.GetAsync(id);

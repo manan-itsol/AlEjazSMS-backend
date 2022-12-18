@@ -1,5 +1,7 @@
 ﻿using AlEjazSMS.Common;
+using AlEjazSMS.Permissions;
 using AlEjazSMS.Students;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace AlEjazSMS.FeeStructures
 {
+    [Authorize]
     public class FeeStructureAppService : ApplicationService, IFeeStructureAppService
     {
         private readonly IRepository<FeeStructure, int> _feeStructureRepository;
@@ -21,6 +24,7 @@ namespace AlEjazSMS.FeeStructures
             _feeStructureRepository = feeStructureRepository;
         }
 
+        [Authorize(PermissionConsts.FeeManagement_FeeStructures)]
         public async Task<PagedResultDto<FeeStructureDto>> GetAllAsync(GetAllRequestDto input)
         {
             var query = (await _feeStructureRepository.GetQueryableAsync())
@@ -31,6 +35,7 @@ namespace AlEjazSMS.FeeStructures
             return new PagedResultDto<FeeStructureDto>(query.LongCount(), ObjectMapper.Map<List<FeeStructure>, List<FeeStructureDto>>(result));
         }
 
+        [Authorize(PermissionConsts.FeeManagement_FeeStructures)]
         public async Task<FeeStructureDto> GetAsync(int id)
         {
             var feeStructure = await _feeStructureRepository.GetAsync(id, includeDetails: true);
@@ -40,6 +45,7 @@ namespace AlEjazSMS.FeeStructures
             return ObjectMapper.Map<FeeStructure, FeeStructureDto>(feeStructure);
         }
 
+        [Authorize(PermissionConsts.FeeManagement_FeeStructures_Create)]
         public async Task<GenericResponseDto<FeeStructureDto>> CreateAsync(CreateFeeStructureRequestDto request)
         {
             var feeStructure = ObjectMapper.Map<CreateFeeStructureRequestDto, FeeStructure>(request);
@@ -53,6 +59,7 @@ namespace AlEjazSMS.FeeStructures
         }
 
         [HttpPost]
+        [Authorize(PermissionConsts.FeeManagement_FeeStructures_Update)]
         public async Task<GenericResponseDto<FeeStructureDto>> UpdateAsync(UpdateFeeStructureRequestDto request)
         {
             var feeStructure = await _feeStructureRepository.GetAsync(request.Id);
@@ -69,6 +76,7 @@ namespace AlEjazSMS.FeeStructures
             };
         }
 
+        [Authorize(PermissionConsts.FeeManagement_FeeStructures_Delete)]
         public async Task<BaseResponseDto> DeleteAsync(int id)
         {
             var feeStructure = await _feeStructureRepository.GetAsync(id);

@@ -1,4 +1,5 @@
 ﻿using AlEjazSMS.Common;
+using AlEjazSMS.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,6 +27,7 @@ namespace AlEjazSMS.Classes
             _classSectionRepository = classSectionRepository;
         }
 
+        [Authorize(PermissionConsts.ClassesManagement_Classes)]
         public async Task<PagedResultDto<ClassDto>> GetAllAsync(GetAllRequestDto input)
         {
             var query = (await _classRepository.WithDetailsAsync())
@@ -37,6 +39,7 @@ namespace AlEjazSMS.Classes
             return new PagedResultDto<ClassDto>(query.LongCount(), ObjectMapper.Map<List<Class>, List<ClassDto>>(result));
         }
 
+        [Authorize(PermissionConsts.ClassesManagement_Classes)]
         public async Task<ClassDto> GetAsync(int id)
         {
             var query = (await _classRepository.WithDetailsAsync())
@@ -48,6 +51,7 @@ namespace AlEjazSMS.Classes
             return ObjectMapper.Map<Class, ClassDto>(classDto);
         }
 
+        [Authorize(PermissionConsts.ClassesManagement_Classes_Create)]
         public async Task<GenericResponseDto<ClassDto>> CreateAsync(CreateClassRequestDto request)
         {
             var classObj = ObjectMapper.Map<CreateClassRequestDto, Class>(request);
@@ -69,6 +73,7 @@ namespace AlEjazSMS.Classes
         }
 
         [HttpPost]
+        [Authorize(PermissionConsts.ClassesManagement_Classes_Update)]
         public async Task<GenericResponseDto<ClassDto>> UpdateAsync(UpdateClassRequestDto request)
         {
             var classObj = await _classRepository.GetAsync(request.Id, includeDetails: true);
@@ -108,6 +113,7 @@ namespace AlEjazSMS.Classes
             };
         }
 
+        [Authorize(PermissionConsts.ClassesManagement_Classes_Delete)]
         public async Task<BaseResponseDto> DeleteAsync(int id)
         {
             var classObj = await _classRepository.GetAsync(id);

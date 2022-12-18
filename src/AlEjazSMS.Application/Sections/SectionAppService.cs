@@ -1,5 +1,6 @@
 ﻿using AlEjazSMS.Classes;
 using AlEjazSMS.Common;
+using AlEjazSMS.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,6 +27,7 @@ namespace AlEjazSMS.Sections
             _classSectionRepository = classSectionRepository;
         }
 
+        [Authorize(PermissionConsts.SectionsManagement_Sections)]
         public async Task<PagedResultDto<SectionDto>> GetAllAsync(GetAllRequestDto input)
         {
             var query = (await _sectionRepository.GetQueryableAsync())
@@ -36,6 +38,7 @@ namespace AlEjazSMS.Sections
             return new PagedResultDto<SectionDto>(query.LongCount(), ObjectMapper.Map<List<Section>, List<SectionDto>>(result));
         }
 
+        [Authorize(PermissionConsts.SectionsManagement_Sections)]
         public async Task<SectionDto> GetAsync(int id)
         {
             var section = await _sectionRepository.GetAsync(id);
@@ -45,6 +48,7 @@ namespace AlEjazSMS.Sections
             return ObjectMapper.Map<Section, SectionDto>(section);
         }
 
+        [Authorize(PermissionConsts.SectionsManagement_Sections_Create)]
         public async Task<GenericResponseDto<SectionDto>> CreateAsync(CreateSectionRequestDto request)
         {
             var section = ObjectMapper.Map<CreateSectionRequestDto, Section>(request);
@@ -58,6 +62,7 @@ namespace AlEjazSMS.Sections
         }
 
         [HttpPost]
+        [Authorize(PermissionConsts.SectionsManagement_Sections_Update)]
         public async Task<GenericResponseDto<SectionDto>> UpdateAsync(UpdateSectionRequestDto request)
         {
             var section = await _sectionRepository.GetAsync(request.Id);
@@ -74,6 +79,7 @@ namespace AlEjazSMS.Sections
             };
         }
 
+        [Authorize(PermissionConsts.SectionsManagement_Sections_Delete)]
         public async Task<BaseResponseDto> DeleteAsync(int id)
         {
             var section = await _sectionRepository.GetAsync(id);
