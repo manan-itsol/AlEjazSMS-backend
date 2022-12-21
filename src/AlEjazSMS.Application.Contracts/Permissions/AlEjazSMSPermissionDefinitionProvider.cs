@@ -8,28 +8,40 @@ public class AlEjazSMSPermissionDefinitionProvider : PermissionDefinitionProvide
 {
     public override void Define(IPermissionDefinitionContext context)
     {
-        context.AddGroup(PermissionConsts.BranchesManagementGroupName)
-                .AddPermission(PermissionConsts.BranchesManagement_Branches)
-                    .AddChild(PermissionConsts.BranchesManagement_Branches_Create)
-                    .AddChild(PermissionConsts.BranchesManagement_Branches_Update)
+        var branchesPermission = context.AddGroup(PermissionConsts.BranchesManagementGroupName)
+                    .AddPermission(PermissionConsts.BranchesManagement_Branches);
+        branchesPermission
+                    .AddChild(PermissionConsts.BranchesManagement_Branches_Create);
+        branchesPermission
+                    .AddChild(PermissionConsts.BranchesManagement_Branches_Update);
+        branchesPermission
                     .AddChild(PermissionConsts.BranchesManagement_Branches_Delete);
 
-        context.AddGroup(PermissionConsts.ClassesManagementGroupName)
-                .AddPermission(PermissionConsts.ClassesManagement_Classes)
-                    .AddChild(PermissionConsts.ClassesManagement_Classes_Create)
-                    .AddChild(PermissionConsts.ClassesManagement_Classes_Update)
+        var classesPermission = context.AddGroup(PermissionConsts.ClassesManagementGroupName)
+                .AddPermission(PermissionConsts.ClassesManagement_Classes);
+        classesPermission
+                    .AddChild(PermissionConsts.ClassesManagement_Classes_Create);
+        classesPermission
+                    .AddChild(PermissionConsts.ClassesManagement_Classes_Update);
+        classesPermission
                     .AddChild(PermissionConsts.ClassesManagement_Classes_Delete);
 
-        context.AddGroup(PermissionConsts.SectionsManagementGroupName)
-                .AddPermission(PermissionConsts.SectionsManagement_Sections)
-                    .AddChild(PermissionConsts.SectionsManagement_Sections_Create)
-                    .AddChild(PermissionConsts.SectionsManagement_Sections_Update)
+        var sectionsPermission = context.AddGroup(PermissionConsts.SectionsManagementGroupName)
+                .AddPermission(PermissionConsts.SectionsManagement_Sections);
+        sectionsPermission
+                    .AddChild(PermissionConsts.SectionsManagement_Sections_Create);
+        sectionsPermission
+                    .AddChild(PermissionConsts.SectionsManagement_Sections_Update);
+        sectionsPermission
                     .AddChild(PermissionConsts.SectionsManagement_Sections_Delete);
 
-        context.AddGroup(PermissionConsts.StudentsManagementGroupName)
-                .AddPermission(PermissionConsts.StudentsManagement_Students)
-                    .AddChild(PermissionConsts.StudentsManagement_Students_Create)
-                    .AddChild(PermissionConsts.StudentsManagement_Students_Update)
+        var studentsPermission = context.AddGroup(PermissionConsts.StudentsManagementGroupName)
+                .AddPermission(PermissionConsts.StudentsManagement_Students);
+        studentsPermission
+                    .AddChild(PermissionConsts.StudentsManagement_Students_Create);
+        studentsPermission
+                    .AddChild(PermissionConsts.StudentsManagement_Students_Update);
+        studentsPermission
                     .AddChild(PermissionConsts.StudentsManagement_Students_Delete);
     }
 }
