@@ -7,6 +7,7 @@ namespace AlEjazSMS.Students
     public class UpdateStudentRequestDto : CreateStudentRequestDto
     {
         public long Id { get; set; }
+        public StudentStatus Status { get; set; }
     }
 
 }

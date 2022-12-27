@@ -14,5 +14,6 @@ namespace AlEjazSMS.FeeStructures
         Task<GenericResponseDto<FeeStructureDto>> CreateAsync(CreateFeeStructureRequestDto request);
         Task<GenericResponseDto<FeeStructureDto>> UpdateAsync(UpdateFeeStructureRequestDto request);
         Task<BaseResponseDto> DeleteAsync(int id);
+        Task<List<LookupDto>> GetLookupAsync(string searchText = null);
     }
 }

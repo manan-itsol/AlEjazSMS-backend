@@ -17,5 +17,6 @@ namespace AlEjazSMS.Students
         Task<BaseResponseDto> DeleteAsync(long id);
         Task<List<LookupDto>> GetLookupAsync(string searchText = null);
         Task<long> GetNextRollNoAsync(int classId, int sectionId);
+        Task<bool> AssignFeeStructuresAsync(long studentId, List<int> feeStructureIds);
     }
 }

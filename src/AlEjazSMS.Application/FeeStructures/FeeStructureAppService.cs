@@ -87,5 +87,19 @@ namespace AlEjazSMS.FeeStructures
             await CurrentUnitOfWork.SaveChangesAsync();
             return new BaseResponseDto { Success = true };
         }
+
+        public async Task<List<LookupDto>> GetLookupAsync(string searchText = null)
+        {
+            var query = (await _feeStructureRepository.GetQueryableAsync())
+                                .WhereIf(!string.IsNullOrEmpty(searchText), x =>
+                                    x.Title.Contains(searchText)
+                                    || x.Description.Contains(searchText));
+            var result = await AsyncExecuter.ToListAsync(query.Select(x => new LookupDto
+            {
+                Text = x.Title,
+                Value = x.Id.ToString()
+            }));
+            return result;
+        }
     }
 }

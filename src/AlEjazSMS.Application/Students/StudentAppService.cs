@@ -21,12 +21,15 @@ namespace AlEjazSMS.Students
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IRepository<ClassSection, int> _classSectionRepository;
+        private readonly IRepository<StudentFeeStructure, int> _studentFeeStructureRepository;
         public StudentAppService(
             IStudentRepository studentRepository,
-            IRepository<ClassSection, int> classSectionRepository)
+            IRepository<ClassSection, int> classSectionRepository,
+            IRepository<StudentFeeStructure, int> studentFeeStructureRepository)
         {
             _studentRepository = studentRepository;
             _classSectionRepository = classSectionRepository;
+            _studentFeeStructureRepository = studentFeeStructureRepository;
         }
 
         [Authorize(PermissionConsts.StudentsManagement_Students)]
@@ -151,6 +154,23 @@ namespace AlEjazSMS.Students
                                                 .OrderByDescending(x => x.RollNo)
                                                 .Select(x => x.RollNo));
             return lastRollNo + 1;
+        }
+
+        public async Task<bool> AssignFeeStructuresAsync(long studentId,List<int> feeStructureIds)
+        {
+            var student =await _studentRepository.FirstOrDefaultAsync(x => x.Id == studentId);
+            if(student == null)
+            {
+                throw new EntityNotFoundException("Student not found or doesn't exist in the system.");
+            }
+
+            await _studentFeeStructureRepository.InsertManyAsync(feeStructureIds.Select(x => new StudentFeeStructure
+            {
+                FeeStructureId = x,
+                StudentId = studentId
+            }));
+            await CurrentUnitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }
